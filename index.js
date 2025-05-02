@@ -1,18 +1,26 @@
 import express from 'express';
 import './config/dotenv.js'
-import authRoutes from './routes/auth_routes.js';
-import courseRoutes from './routes/course_routes.js';
+import authUserRouter from './routes/auth_users.js';
+import authAdminRouter from './routes/auth_admin.js';
+import courseRouter from './routes/course_routes.js';
+import userRouter from './routes/user_routes.js';
+import adminRouter from './routes/admin_routes.js';
+import { connectDB } from './config/db.js';
 
 const app = express();
 const PORT = process.env.PORT;
 app.use(express.json())
+connectDB();
 
 app.get('/', (req, res)=>{
     res.send({msg: "Welcome to Home page"})
 })
 
-app.use('/auth/user', authRoutes);
-app.use('/course', courseRoutes)
+app.use('/auth/user', authUserRouter);
+app.use('/auth/admin', authAdminRouter);
+app.use('/user', userRouter)
+app.use('/admin', adminRouter);
+app.use('/course', courseRouter)
 
 app.listen(PORT, ()=>{
     console.log(`Server is live at PORT ${PORT}`)
