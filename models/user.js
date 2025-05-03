@@ -64,5 +64,5 @@ adminSchema.pre('save', async function(next){
 
 export const userModel = mongoose.model('user', userSchema);
 export const adminModel = mongoose.model('admin', adminSchema);
-export const courseModel = mongoose.model('course', courseSchema);
+export const courseModel = mongoose.model('course',  courseSchema);
 export const purchasedModel = mongoose.model('purchased', purchasedSchema);
