@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { userModel } from '../models/user.js';
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs';
 
 const authUserRouter = Router();
 
@@ -20,8 +22,24 @@ authUserRouter.post('/register', async (req, res)=>{
     }
 })
 
-authUserRouter.post('/login', (req, res)=>{
-
+authUserRouter.post('/login', async (req, res)=>{
+    try{
+        const {body: {email, password}} = req;
+        const findUser = await userModel.findOne({email});
+        if(!findUser) res.status(404).send({msg: "User not found"});
+        if(!(await bcrypt.compare(password, findUser.password))) res.status(403).send({msg: "Incorrect Password"})
+        const token = jwt.sign({id: findUser.id}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
+        res.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 1000*60*60
+        })
+        res.status(200).send({msg: "user logged in"});
+    }catch(err){
+        res.status(500).send({
+            msg: "Server Error! Something went wrong",
+            error: err.message
+        })
+    }
 })
 
 export default authUserRouter;
