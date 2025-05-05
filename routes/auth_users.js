@@ -28,7 +28,7 @@ authUserRouter.post('/login', async (req, res)=>{
         const findUser = await userModel.findOne({email});
         if(!findUser) res.status(404).send({msg: "User not found"});
         if(!(await bcrypt.compare(password, findUser.password))) res.status(403).send({msg: "Incorrect Password"})
-        const token = jwt.sign({id: findUser.id}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
+        const token = jwt.sign({id: findUser.id}, process.env.JWT_SECRET_KEY_USER, {expiresIn: '1h'});
         res.cookie('token', token, {
             httpOnly: true,
             maxAge: 1000*60*60

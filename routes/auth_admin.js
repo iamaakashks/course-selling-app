@@ -24,7 +24,7 @@ authAdminRouter.post('/login', async (req, res)=>{
         const findUser = adminModel.findOne({username});
         if(!findUser && !(await bcrypt.compare(password, findUser.password))) res.status(403).send({msg: "Bad Credential"})
 
-        const token = jwt.sign({id: findUser.id}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'})
+        const token = jwt.sign({id: findUser.id}, process.env.JWT_SECRET_KEY_ADMIN, {expiresIn: '1h'})
         res.cookie('token', token, {
             httpOnly: true,
             maxAge: 1000*60*60*24
