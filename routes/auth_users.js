@@ -43,8 +43,16 @@ authUserRouter.post('/login', async (req, res)=>{
     }
 })
 
-authUserRouter.get("/purchase", userMiddleware, (req, res)=>{
-    res.status(200).send({msg: `Welcome ${req.user.name}`});
+authUserRouter.get("/purchase", userMiddleware, async (req, res)=>{
+    try{
+        const getUserById = await userModel.findById(req.userId)
+        console.log(getUserById);
+        if(!getUserById) res.status(404).send({msg :"user not found"});
+        return res.status(200).send({msg: `Welcome ${getUserById.name}`});
+    }catch(err){
+        console.log(`something went wrong`);
+        res.sendStatus(500)
+    }
 })
 
 export default authUserRouter;
