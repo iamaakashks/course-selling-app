@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { userModel } from '../models/user.js';
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs';
+import { userMiddleware } from '../middleware/user.js';
 
 const authUserRouter = Router();
 
@@ -40,6 +41,10 @@ authUserRouter.post('/login', async (req, res)=>{
             error: err.message
         })
     }
+})
+
+authUserRouter.get("/purchase", userMiddleware, (req, res)=>{
+    res.status(200).send({msg: `Welcome ${req.user.name}`});
 })
 
 export default authUserRouter;
