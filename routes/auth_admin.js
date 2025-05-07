@@ -38,7 +38,8 @@ authAdminRouter.post('/login', async (req, res)=>{
 authAdminRouter.get("/course", adminMiddleware, async (req, res)=>{
     try{
         const getAdminById = await adminModel.findById(req.adminId);
-        const getAllCourses = await courseModel.findOne({creatorId: req.adminId})
+        const getAllCourses = await courseModel.find({creatorId: req.adminId})
+        console.log(getAllCourses);
         res.status(200).send({msg: `welcome ${getAdminById.name}`,
             "Course Details": {
                 Title: getAllCourses.title,

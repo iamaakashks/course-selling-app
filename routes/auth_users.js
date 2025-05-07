@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { userModel } from '../models/user.js';
+import { purchasedModel, userModel } from '../models/user.js';
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs';
 import { userMiddleware } from '../middleware/user.js';
@@ -42,11 +42,26 @@ authUserRouter.post('/login', async (req, res)=>{
         })
     }
 })
+authUserRouter.post("/purchase", userMiddleware, async(req, res)=>{
+    try{
+        const userId = req.userId;
+        const courseId = req.body.courseId;
+        const newPurchase = new purchasedModel({
+            userId,
+            courseId
+        })
+        await newPurchase.save()
+        res.status(201).send({
+            msg: `purchased a course with course id ${courseId}`
+        })
+    }catch(err){
+        res.sendStatus(500);
+    }
+})
 
 authUserRouter.get("/purchase", userMiddleware, async (req, res)=>{
     try{
         const getUserById = await userModel.findById(req.userId)
-        console.log(getUserById);
         if(!getUserById) res.status(404).send({msg :"user not found"});
         return res.status(200).send({msg: `Welcome ${getUserById.name}`});
     }catch(err){
