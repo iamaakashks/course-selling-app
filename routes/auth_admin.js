@@ -38,7 +38,15 @@ authAdminRouter.post('/login', async (req, res)=>{
 authAdminRouter.get("/course", adminMiddleware, async (req, res)=>{
     try{
         const getAdminById = await adminModel.findById(req.adminId);
-        res.status(200).send({msg: `welcome ${getAdminById.name}`})
+        const getAllCourses = await courseModel.findOne({creatorId: req.adminId})
+        res.status(200).send({msg: `welcome ${getAdminById.name}`,
+            "Course Details": {
+                Title: getAllCourses.title,
+                Description: getAllCourses.description,
+                Price: getAllCourses.price,
+                Image: getAllCourses.imageURL
+            }
+    })
     }catch(err){
         console.log(`server error occured`);
         res.sendStatus(500);
@@ -47,15 +55,14 @@ authAdminRouter.get("/course", adminMiddleware, async (req, res)=>{
 
 authAdminRouter.post("/course", adminMiddleware, async (req, res)=>{
     try{
-        const adminId = req.userId;
+        const creatorId = req.adminId;
         const  {body: {title, description, imageURL, price}} = req;
-        console.log(req.body)
         const newCourse = new courseModel({
             title: title,
             description: description,
             imageURL: imageURL,
             price: price,
-            creatorId: adminId
+            creatorId: creatorId
         })
         await newCourse.save();
         res.status(201).send({msg: "New Course Created"});
