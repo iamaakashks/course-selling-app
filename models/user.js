@@ -32,17 +32,23 @@ const adminSchema = mongoose.Schema({
     }
 })
 const courseSchema = mongoose.Schema({
-    courseName: {
+    title: {
         type: String,
         required: [true, "Course name is required"]
+    },
+    description:{
+        type: String,
+        required: [true, "Description is missing"]
     },
     price: {
         type: Number,
         required: [true, "Price is required"]
     },
+    imageURL: {
+        type: String
+    },
     creatorId: {
         type: mongoose.Schema.Types.ObjectId,
-
     }
 })
 const purchasedSchema = mongoose.Schema({

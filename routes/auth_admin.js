@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { adminModel } from '../models/user.js';
+import { adminModel, courseModel } from '../models/user.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { adminMiddleware } from '../middleware/admin.js';
@@ -44,5 +44,24 @@ authAdminRouter.get("/course", adminMiddleware, async (req, res)=>{
         res.sendStatus(500);
     }
 })
+
+authAdminRouter.post("/course", adminMiddleware, async (req, res)=>{
+    try{
+        const adminId = req.userId;
+        const  {body: {title, description, imageURL, price}} = req;
+        console.log(req.body)
+        const newCourse = new courseModel({
+            title: title,
+            description: description,
+            imageURL: imageURL,
+            price: price,
+            creatorId: adminId
+        })
+        await newCourse.save();
+        res.status(201).send({msg: "New Course Created"});
+    }catch(err){
+        res.status(500).send({msg: err.message});
+    }
+});
 
 export default authAdminRouter;
