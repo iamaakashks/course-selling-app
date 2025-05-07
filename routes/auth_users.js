@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { purchasedModel, userModel } from '../models/user.js';
+import { courseModel, purchasedModel, userModel } from '../models/user.js';
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs';
 import { userMiddleware } from '../middleware/user.js';
@@ -63,7 +63,17 @@ authUserRouter.get("/purchase", userMiddleware, async (req, res)=>{
     try{
         const getUserById = await userModel.findById(req.userId)
         if(!getUserById) res.status(404).send({msg :"user not found"});
-        return res.status(200).send({msg: `Welcome ${getUserById.name}`});
+        const purchasedCourse = await purchasedModel.find(
+            {
+                userId: req.userId
+            }
+        )
+        const purchasedCourseDetails = await courseModel.find(
+            {
+                _id: { $in: purchasedCourse.map(i => i.courseId)}
+            }
+        )
+        return res.status(200).send({purchasedCourse, purchasedCourseDetails});
     }catch(err){
         console.log(`something went wrong`);
         res.sendStatus(500)

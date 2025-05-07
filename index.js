@@ -22,7 +22,7 @@ app.use('/auth/user', authUserRouter);
 app.use('/auth/admin', authAdminRouter);
 app.use('/user', userRouter)
 app.use('/admin', adminRouter);
-app.use('/course', courseRouter)
+app.use('/courses', courseRouter)
 
 app.listen(PORT, ()=>{
     console.log(`Server is live at PORT ${PORT}`)
