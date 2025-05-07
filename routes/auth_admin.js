@@ -8,8 +8,8 @@ const authAdminRouter = Router();
 
 authAdminRouter.post('/register', async (req, res)=>{
     try{
-        const {body: {name, username, password}} = req;
-        const existingAdmin = await adminModel.findOne({username});
+        const {body: {name, email, password}} = req;
+        const existingAdmin = await adminModel.findOne({email});
         if(existingAdmin) return res.status(409).send({msg: "Admin already exists"});
         const newUser = adminModel.create(req.body);
         res.status(201).send({msg: "Admin Created"})
@@ -70,5 +70,28 @@ authAdminRouter.post("/course", adminMiddleware, async (req, res)=>{
         res.status(500).send({msg: err.message});
     }
 });
+
+authAdminRouter.put('/course', adminMiddleware, async (req, res)=>{
+    try{
+        const adminId = req.adminId;
+        const {body: {title, description, imageURL, price, courseId}} = req;
+        const course = await courseModel.updateOne(
+            {
+                creatorId: adminId
+            },
+            {$set: {
+                title: title,
+                description,
+                imageURL,
+                price
+            }}
+        )
+        res.status(201).send({msg: "Updatation successful"})
+    }catch(err){
+        res.sendStatus(500);
+    }
+    
+
+})
 
 export default authAdminRouter;
